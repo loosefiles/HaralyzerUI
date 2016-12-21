@@ -69,6 +69,7 @@ $( document ).ready(function() {
           {
             label: "Total Load Time",
             fillColor: "#000",
+            backgroundColor: "rgba(255, 173, 86, .3)",
             strokeColor: "rgba(255, 173, 86, 1)",
             pointColor: "rgba(255, 173, 86, 1)",
             pointStrokeColor: "#fff",
@@ -79,6 +80,7 @@ $( document ).ready(function() {
           {
             label: "Javascript Loading Time",
             fillColor: "#000",
+            backgroundColor: "rgba(0, 173, 86, .3)",
             strokeColor: "rgba(255, 173, 86, 1)",
             pointColor: "rgba(255, 173, 86, 1)",
             pointStrokeColor: "#fff",
@@ -89,6 +91,7 @@ $( document ).ready(function() {
           {
             label: "CSS Loading Time",
             fillColor: "#000",
+            backgroundColor: "rgba(200, 13, 86, .3)",
             strokeColor: "rgba(255, 173, 86, 1)",
             pointColor: "rgba(255, 173, 86, 1)",
             pointStrokeColor: "#fff",
@@ -99,6 +102,7 @@ $( document ).ready(function() {
           {
             label: "Image Loading Time",
             fillColor: "rgba(255, 173, 86,0.2)",
+            backgroundColor: "rgba(5, 173, 86, .3)",
             strokeColor: "rgba(255, 173, 86,1)",
             pointColor: "rgba(151,187,205,1)",
             pointStrokeColor: "#fff",
@@ -109,6 +113,7 @@ $( document ).ready(function() {
           {
             label: "HTML Loading Time",
             fillColor: "rgba(255, 173, 86,0.2)",
+            backgroundColor: "rgba(25, 13, 86, .3)",
             strokeColor: "rgba(255, 173, 86,1)",
             pointColor: "rgba(151,187,205,1)",
             pointStrokeColor: "#fff",
@@ -118,6 +123,8 @@ $( document ).ready(function() {
           }
         ]
       };
+
+
 
     // Get the context of the canvas element we want to select
     var ctx = document.getElementById("myChart").getContext("2d");
@@ -130,6 +137,7 @@ $( document ).ready(function() {
     });
     });
 });
+
 
 </script>
 
