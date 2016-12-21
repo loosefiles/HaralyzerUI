@@ -49,10 +49,10 @@ $( document ).ready(function() {
     var image_values = [];
     var full_page_values = []
 
-	$.get( "http://205.186.162.214:5000/tests/?hostname=humanssuck.net", function( newdata ) {
+	$.get( "http://205.186.162.214:5000/tests/", function( newdata ) {
         newdata.data.forEach(function(element) {
             var page = element.pages[0];
-            labels.push(page.startedDateTime);
+            labels.push(element.startedDateTime);
             js_values.push(page.js_load_time);
             css_values.push(page.css_load_time);
             html_values.push(page.html_load_time);
