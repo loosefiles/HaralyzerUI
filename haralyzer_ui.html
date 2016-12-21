@@ -47,9 +47,18 @@ function populateData(context) {
     var base_url = "http://205.186.162.214:5000/tests/?";
     if ( 'start_date' in context ) {
         base_url += 'start_date=' + context.start_date + '&';
+        // See if end date is still set or not
+        var end_date = $('#end_date').val();
+        if ( end_date ) {
+            base_url += 'end_date=' + end_date + '&';
+        }
     }
     if ( 'end_date' in context ) {
         base_url += 'end_date=' + context.end_date + '&';
+        var start_date = $('#start_date').val();
+        if ( start_date ) {
+            base_url += 'start_date=' + start_date + '&';
+        }
     }
     var labels = [];
     var js_values = [];
