@@ -19,9 +19,10 @@ function myGraph (harData) {  //Adds the site name
 
 function fixTimeDisplay(display_time) {
     var display_time = display_time.split(' ');
-    display_time.pop()
-    display_time.pop()
-    var display_time = display_time.join();
+    display_time.shift();
+    display_time.pop();
+    display_time.pop();
+    var display_time = display_time.join(' ');
     return display_time;
 }
 
@@ -63,12 +64,19 @@ function populateData(context) {
             base_url += 'start_date=' + start_date + '&';
         }
     }
+
     var labels = [];
     var js_values = [];
     var css_values = [];
     var html_values = [];
     var image_values = [];
-    var full_page_values = []
+    var full_page_values = [];
+    var js_size_values = [];
+    var css_size_values = [];
+    var html_size_values = [];
+    var image_size_values = [];
+    var full_page_size_values = [];
+
 	$.get( base_url, function( newdata ) {
         newdata.data.forEach(function(element) {
             var page = element.pages[0];
@@ -78,6 +86,12 @@ function populateData(context) {
             html_values.push(page.html_load_time);
             image_values.push(page.image_load_time);
             full_page_values.push(page.page_load_time);
+
+            js_size_values.push(page.js_size);
+            css_size_values.push(page.css_size);
+            html_size_values.push(page.html_size);
+            image_size_values.push(page.image_size);
+            full_page_size_values.push(page.page_size);
         });
 
      var data = { //info used to style and plot the graph
@@ -142,6 +156,66 @@ function populateData(context) {
       };
 
 
+     var size_data = { //info used to style and plot the graph
+       labels: labels,
+        datasets: [
+          {
+            label: "Page Size",
+            fillColor: "#000",
+            backgroundColor: "rgba(255, 173, 86, .3)",
+            strokeColor: "rgba(255, 173, 86, 1)",
+            pointColor: "rgba(255, 173, 86, 1)",
+            pointStrokeColor: "#fff",
+            pointHighlightFill: "#fff",
+            pointHighlightStroke: "rgba(220,220,220,1)",
+            data: full_page_size_values
+          },
+          {
+            label: "Javascript Size",
+            fillColor: "#000",
+            backgroundColor: "rgba(0, 173, 86, .3)",
+            strokeColor: "rgba(255, 173, 86, 1)",
+            pointColor: "rgba(255, 173, 86, 1)",
+            pointStrokeColor: "#fff",
+            pointHighlightFill: "#fff",
+            pointHighlightStroke: "rgba(220,220,220,1)",
+            data: js_size_values
+          },
+          {
+            label: "CSS Size",
+            fillColor: "#000",
+            backgroundColor: "rgba(200, 13, 86, .3)",
+            strokeColor: "rgba(255, 173, 86, 1)",
+            pointColor: "rgba(255, 173, 86, 1)",
+            pointStrokeColor: "#fff",
+            pointHighlightFill: "#fff",
+            pointHighlightStroke: "rgba(220,220,220,1)",
+            data: css_size_values
+          },
+          {
+            label: "Image Size",
+            fillColor: "rgba(255, 173, 86,0.2)",
+            backgroundColor: "rgba(5, 173, 86, .3)",
+            strokeColor: "rgba(255, 173, 86,1)",
+            pointColor: "rgba(151,187,205,1)",
+            pointStrokeColor: "#fff",
+            pointHighlightFill: "#fff",
+            pointHighlightStroke: "rgba(151,187,205,1)",
+            data: image_size_values
+          },
+          {
+            label: "HTML Size",
+            fillColor: "rgba(255, 173, 86,0.2)",
+            backgroundColor: "rgba(25, 13, 86, .3)",
+            strokeColor: "rgba(255, 173, 86,1)",
+            pointColor: "rgba(151,187,205,1)",
+            pointStrokeColor: "#fff",
+            pointHighlightFill: "#fff",
+            pointHighlightStroke: "rgba(151,187,205,1)",
+            data: html_size_values
+          }
+        ]
+      };
 
     // Get the context of the canvas element we want to select
     var ctx = document.getElementById("myChart").getContext("2d");
@@ -151,6 +225,16 @@ function populateData(context) {
     var myNewChart = new Chart(ctx , {
         type: "line",
         data: data,
+    });
+
+    // Get the context of the canvas element we want to select
+    var size_ctx = document.getElementById("size_chart").getContext("2d");
+
+    // Instantiate a new chart using 'data' (defined below)
+    //  var myChart = new Chart(ctx).Line(data);
+    var mySizeChart = new Chart(size_ctx , {
+        type: "line",
+        data: size_data,
     });
     });
 }
@@ -192,15 +276,15 @@ $( document ).ready(function() {
         End Date<input type="text" name="end_date" id="end_date">
     </div>
 	<div id="container">
+        <h1>Page Load Breakdown</h1>
 		<canvas id="myChart" width="740" height="200"></canvas>
 		<div id="monitr" class="text-items"></div>
 		<div id="cssaverage" class="text-items"></div>
 		<div id="htmlaverage" class="text-items"></div>
 		<div id="result"></div>
+        <h1>Page Size Breakdown</h1>
+		<canvas id="size_chart" width="740" height="200"></canvas>
 
 	</div>
-
-
-
 </body>
 </html>
