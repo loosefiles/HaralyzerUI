@@ -19,9 +19,10 @@ function myGraph (harData) {  //Adds the site name
 
 function fixTimeDisplay(display_time) {
     var display_time = display_time.split(' ');
-    display_time.pop()
-    display_time.pop()
-    var display_time = display_time.join();
+    display_time.shift();
+    display_time.pop();
+    display_time.pop();
+    var display_time = display_time.join(' ');
     return display_time;
 }
 
