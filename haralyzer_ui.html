@@ -9,6 +9,48 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.bundle.js"></script>
 <script>
  	
+function myGraph (harData) {  //Adds the site name
+    var graphPlace = document.getElementById("monitr");
+    var graphData = harData['data'][0]['hostname'];
+    graphPlace.innerHTML = "This report is for: " + graphData;
+}
+
+function timeAverage (data) { //Gets the CSS and HTML time average
+    var csstime = data.datasets[0].data;
+    var total = 0;
+    for(var i = 0; i < csstime.length; i++) {
+        total += csstime[i];
+    }
+    var cssavg = total / csstime.length;
+    var cssavgtext = document.getElementById("cssaverage");
+    cssavgtext.innerHTML = "Average CSS loading time: " + cssavg + " seconds";
+
+    var htmltime = data.datasets[1].data;
+    var total = 0;
+    for(var i = 0; i < htmltime.length; i++) {
+        total += htmltime[i];
+    }
+
+    var htmlavg = total / htmltime.length;
+    var htmlavgtext = document.getElementById("htmlaverage");
+    htmlavgtext.innerHTML = "Average HTML loading time: " + htmlavg + " seconds";
+
+    for (var i = 0; i < apidata.data.length; i++) {
+        console.log(data.labels);
+        data.labels[i] = apidata.data[i].startedDateTime;
+    }
+
+    // Get the context of the canvas element we want to select
+    var ctx = document.getElementById("myChart").getContext("2d");
+
+    // Instantiate a new chart using 'data' (defined below)
+    //  var myChart = new Chart(ctx).Line(data);
+    var myNewChart = new Chart(ctx , {
+        type: "line",
+        data: data, 
+    });
+}
+
 $( document ).ready(function() {
  var data = { //info used to style and plot the graph 
    labels: [],
@@ -40,69 +82,15 @@ $( document ).ready(function() {
 
 	$.get( "http://205.186.162.214:5000/tests/", function( newdata ) {
 		apidata = newdata; //Adds point data to datasets
-		
-		
-		
 		for (var i = 0; i < apidata.data.length; i++) {
-
-		data.datasets[0].data.push(apidata['data'][i]['pages'][0]['css_load_time']);
-		data.datasets[1].data.push(apidata['data'][i]['pages'][0]['html_load_time']);
-		
-		timeAverage ();
-		myGraph (apidata);
-	}
-		function myGraph (harData) {  //Adds the site name
-		var graphPlace = document.getElementById("monitr");
-		var graphData = harData['data'][0]['hostname'];
-		graphPlace.innerHTML = "This report is for: " + graphData;
-		
-			}
-
-		function timeAverage () { //Gets the CSS and HTML time average
-		var csstime = data.datasets[0].data;
-		var total = 0;
-		for(var i = 0; i < csstime.length; i++) {
-		total += csstime[i];
-}
-		var cssavg = total / csstime.length;
-		var cssavgtext = document.getElementById("cssaverage");
-		cssavgtext.innerHTML = "Average CSS loading time: " + cssavg + " seconds";
-
-		var htmltime = data.datasets[1].data;
-		var total = 0;
-		for(var i = 0; i < htmltime.length; i++) {
-		total += htmltime[i];
-}
-		var htmlavg = total / htmltime.length;
-		var htmlavgtext = document.getElementById("htmlaverage");
-		htmlavgtext.innerHTML = "Average HTML loading time: " + htmlavg + " seconds";
-		
-	for (var i = 0; i < apidata.data.length; i++) {
-		data.labels[i] = apidata.data[i].startedDateTime;
-}
-		  // Get the context of the canvas element we want to select
-  var ctx = document.getElementById("myChart").getContext("2d");
-
-  // Instantiate a new chart using 'data' (defined below)
-//  var myChart = new Chart(ctx).Line(data);
-var myNewChart = new Chart(ctx , {
-    type: "line",
-    data: data, 
-});
-
-
-
-
-}
+            data.datasets[0].data.push(apidata['data'][i]['pages'][0]['css_load_time']);
+            data.datasets[1].data.push(apidata['data'][i]['pages'][0]['html_load_time']);
+            timeAverage (data);
+            myGraph (apidata);
+	    }
+    });
 
 });
-
-});
-
-
-
-
-	
 
 </script>
 
