@@ -5,6 +5,8 @@
 <head>
 
 <title>(mt) Account Center - evanyoung.info : Site monitoring</title>
+
+<link rel="stylesheet" href="https://ac.mediatemple.net/_css/mt-ac.css">
 <link rel="stylesheet" href="css/jquery-ui.css">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 <script src="js/jquery-ui.js"></script>
@@ -47,22 +49,40 @@ function timeAverage (data) { //Gets the CSS and HTML time average
     htmlavgtext.innerHTML = "Average HTML loading time: " + htmlavg + " seconds";
 }
 
-function populateData(context) {
+// Builds a URL of the currently selected options so that we can append to it
+function buildUrl() {
     var base_url = "http://205.186.162.214:5000/tests/?";
+
+    var end_date = $('#end_date').val();
+    if ( end_date ) {
+        base_url += 'end_date=' + end_date + '&';
+    }
+
+    var start_date = $('#start_date').val();
+    if ( start_date ) {
+        base_url += 'start_date=' + start_date + '&';
+    }
+
+    var hostname = $('#hostname').val();
+    if ( hostname ) {
+        base_url += 'hostname=' + hostname + '&';
+    }
+
+    return base_url;
+}
+
+function populateData(context) {
+    var base_url = buildUrl();
+    alert(base_url);
+    if ( 'hostname' in context ) {
+        base_url += 'hostname=' + context.hostname + '&';
+    }
     if ( 'start_date' in context ) {
         base_url += 'start_date=' + context.start_date + '&';
         // See if end date is still set or not
-        var end_date = $('#end_date').val();
-        if ( end_date ) {
-            base_url += 'end_date=' + end_date + '&';
-        }
     }
     if ( 'end_date' in context ) {
         base_url += 'end_date=' + context.end_date + '&';
-        var start_date = $('#start_date').val();
-        if ( start_date ) {
-            base_url += 'start_date=' + start_date + '&';
-        }
     }
 
     var labels = [];
@@ -239,6 +259,7 @@ function populateData(context) {
     });
 }
 
+
 $( document ).ready(function() {
     $( "#start_date" ).datepicker(
         {
@@ -256,6 +277,10 @@ $( document ).ready(function() {
             populateData({end_date: $(this).datepicker().val()}); 
         }     
     });
+    $( "#hostname" ).change( function() {
+        populateData({hostname: $( "#hostname option:selected" ).text()});
+    }); 
+
     populateData({});
 });
 
@@ -271,13 +296,22 @@ $( document ).ready(function() {
 </style>
 </head>
 <body>
-    <div id="date_picker">
-        Start Date<input type="text" name="start_date" id="start_date">
-        End Date<input type="text" name="end_date" id="end_date">
+    <div id="header" class="siteHeader  strip">
+        <h2>Performance Overview For domain.com</h2>
     </div>
-	<div id="container">
-        <h1>Page Load Breakdown</h1>
-		<canvas id="myChart" width="740" height="200"></canvas>
+	<div id="container" class="strip strip--light  module  module--small  overviewContent">
+        <div id="date_picker" class="grid-pod  grid-pod--services">
+            Start Date<input type="text" name="start_date" id="start_date">
+            End Date<input type="text" name="end_date" id="end_date">
+            Domain<select id="hostname">
+                    <option value='humanssuck.net' selected>humanssuck.net</option>
+                    <option value='google.com'>google.com</option>
+                  </select>
+        </div>
+        <div id="load_chart" class="grid-pod  grid-pod--services">
+            <h1>Page Load Breakdown</h1>
+		    <canvas id="myChart" width="740" height="200"></canvas>
+        </div>
 		<div id="monitr" class="text-items"></div>
 		<div id="cssaverage" class="text-items"></div>
 		<div id="htmlaverage" class="text-items"></div>
