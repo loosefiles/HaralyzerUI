@@ -5,7 +5,9 @@
 <head>
 
 <title>(mt) Account Center - evanyoung.info : Site monitoring</title>
+<link rel="stylesheet" href="css/jquery-ui.css">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script src="js/jquery-ui.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.bundle.js"></script>
 <script>
 
@@ -44,15 +46,30 @@ function timeAverage (data) { //Gets the CSS and HTML time average
     htmlavgtext.innerHTML = "Average HTML loading time: " + htmlavg + " seconds";
 }
 
-$( document ).ready(function() {
+function populateData(context) {
+    var base_url = "http://205.186.162.214:5000/tests/?";
+    if ( 'start_date' in context ) {
+        base_url += 'start_date=' + context.start_date + '&';
+        // See if end date is still set or not
+        var end_date = $('#end_date').val();
+        if ( end_date ) {
+            base_url += 'end_date=' + end_date + '&';
+        }
+    }
+    if ( 'end_date' in context ) {
+        base_url += 'end_date=' + context.end_date + '&';
+        var start_date = $('#start_date').val();
+        if ( start_date ) {
+            base_url += 'start_date=' + start_date + '&';
+        }
+    }
     var labels = [];
     var js_values = [];
     var css_values = [];
     var html_values = [];
     var image_values = [];
     var full_page_values = []
-
-	$.get( "http://205.186.162.214:5000/tests/", function( newdata ) {
+	$.get( base_url, function( newdata ) {
         newdata.data.forEach(function(element) {
             var page = element.pages[0];
             labels.push(fixTimeDisplay(element.startedDateTime));
@@ -129,6 +146,26 @@ $( document ).ready(function() {
         data: data,
     });
     });
+}
+
+$( document ).ready(function() {
+    $( "#start_date" ).datepicker(
+        {
+            dateFormat: 'mm-dd-yy',
+            onSelect: function()
+        { 
+            populateData({start_date: $(this).datepicker().val()}); 
+        }     
+    });
+    $( "#end_date" ).datepicker(
+        {
+            dateFormat: 'mm-dd-yy',
+            onSelect: function()
+        { 
+            populateData({end_date: $(this).datepicker().val()}); 
+        }     
+    });
+    populateData({});
 });
 
 </script>
@@ -142,7 +179,11 @@ $( document ).ready(function() {
 </style>
 </head>
 <body>
-	<div id= "container">
+    <div id="date_picker">
+        Start Date<input type="text" name="start_date" id="start_date">
+        End Date<input type="text" name="end_date" id="end_date">
+    </div>
+	<div id="container">
 		<canvas id="myChart" width="740" height="200"></canvas>
 		<div id="monitr" class="text-items"></div>
 		<div id="cssaverage" class="text-items"></div>
