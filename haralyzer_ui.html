@@ -15,6 +15,11 @@ function myGraph (harData) {  //Adds the site name
     graphPlace.innerHTML = "This report is for: " + graphData;
 }
 
+function fixTimeDisplay(display_time) {
+    // do stuff with display_time
+    return display_time;
+}
+
 function timeAverage (data) { //Gets the CSS and HTML time average
     var csstime = data.datasets[0].data;
     var total = 0;
@@ -34,11 +39,82 @@ function timeAverage (data) { //Gets the CSS and HTML time average
     var htmlavg = total / htmltime.length;
     var htmlavgtext = document.getElementById("htmlaverage");
     htmlavgtext.innerHTML = "Average HTML loading time: " + htmlavg + " seconds";
+}
 
-    for (var i = 0; i < apidata.data.length; i++) {
-        console.log(data.labels);
-        data.labels[i] = apidata.data[i].startedDateTime;
-    }
+$( document ).ready(function() {
+    var labels = [];
+    var js_values = [];
+    var css_values = [];
+    var html_values = [];
+    var image_values = [];
+    var full_page_values = []
+
+	$.get( "http://205.186.162.214:5000/tests/?hostname=humanssuck.net", function( newdata ) {
+        newdata.data.forEach(function(element) {
+            var page = element.pages[0];
+            labels.push(page.startedDateTime);
+            js_values.push(page.js_load_time);
+            css_values.push(page.css_load_time);
+            html_values.push(page.html_load_time);
+            image_values.push(page.image_load_time);
+            full_page_values.push(page.page_load_time);
+        });
+
+     var data = { //info used to style and plot the graph 
+       labels: labels,
+        datasets: [
+          {
+            label: "Total Load Time",
+            fillColor: "#000",
+            strokeColor: "rgba(255, 173, 86, 1)",
+            pointColor: "rgba(255, 173, 86, 1)",
+            pointStrokeColor: "#fff",
+            pointHighlightFill: "#fff",
+            pointHighlightStroke: "rgba(220,220,220,1)",
+            data: full_page_values
+          },
+          {
+            label: "Javascript Loading Time",
+            fillColor: "#000",
+            strokeColor: "rgba(255, 173, 86, 1)",
+            pointColor: "rgba(255, 173, 86, 1)",
+            pointStrokeColor: "#fff",
+            pointHighlightFill: "#fff",
+            pointHighlightStroke: "rgba(220,220,220,1)",
+            data: js_values
+          },
+          {
+            label: "CSS Loading Time",
+            fillColor: "#000",
+            strokeColor: "rgba(255, 173, 86, 1)",
+            pointColor: "rgba(255, 173, 86, 1)",
+            pointStrokeColor: "#fff",
+            pointHighlightFill: "#fff",
+            pointHighlightStroke: "rgba(220,220,220,1)",
+            data: css_values
+          },
+          {
+            label: "Image Loading Time",
+            fillColor: "rgba(255, 173, 86,0.2)",
+            strokeColor: "rgba(255, 173, 86,1)",
+            pointColor: "rgba(151,187,205,1)",
+            pointStrokeColor: "#fff",
+            pointHighlightFill: "#fff",
+            pointHighlightStroke: "rgba(151,187,205,1)",
+            data: image_values
+          },
+          {
+            label: "HTML Loading Time",
+            fillColor: "rgba(255, 173, 86,0.2)",
+            strokeColor: "rgba(255, 173, 86,1)",
+            pointColor: "rgba(151,187,205,1)",
+            pointStrokeColor: "#fff",
+            pointHighlightFill: "#fff",
+            pointHighlightStroke: "rgba(151,187,205,1)",
+            data: html_values
+          }
+        ]
+      };
 
     // Get the context of the canvas element we want to select
     var ctx = document.getElementById("myChart").getContext("2d");
@@ -49,47 +125,7 @@ function timeAverage (data) { //Gets the CSS and HTML time average
         type: "line",
         data: data, 
     });
-}
-
-$( document ).ready(function() {
- var data = { //info used to style and plot the graph 
-   labels: [],
-    datasets: [
-      {
-        label: "CSS Loading Time",
-        fillColor: "#000",
-        strokeColor: "rgba(255, 173, 86, 1)",
-        pointColor: "rgba(255, 173, 86, 1)",
-        pointStrokeColor: "#fff",
-        pointHighlightFill: "#fff",
-        pointHighlightStroke: "rgba(220,220,220,1)",
-        data: []
-      },
-      
-   
-      {
-        label: "HTML Loading Time",
-        fillColor: "rgba(255, 173, 86,0.2)",
-        strokeColor: "rgba(255, 173, 86,1)",
-        pointColor: "rgba(151,187,205,1)",
-        pointStrokeColor: "#fff",
-        pointHighlightFill: "#fff",
-        pointHighlightStroke: "rgba(151,187,205,1)",
-        data: []
-      }
-    ]
-  };
-
-	$.get( "http://205.186.162.214:5000/tests/", function( newdata ) {
-		apidata = newdata; //Adds point data to datasets
-		for (var i = 0; i < apidata.data.length; i++) {
-            data.datasets[0].data.push(apidata['data'][i]['pages'][0]['css_load_time']);
-            data.datasets[1].data.push(apidata['data'][i]['pages'][0]['html_load_time']);
-            timeAverage (data);
-            myGraph (apidata);
-	    }
     });
-
 });
 
 </script>
