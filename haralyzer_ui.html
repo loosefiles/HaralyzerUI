@@ -73,7 +73,6 @@ function buildUrl() {
 
 function populateData(context) {
     var base_url = buildUrl();
-    alert(base_url);
     if ( 'hostname' in context ) {
         base_url += 'hostname=' + context.hostname + '&';
     }
@@ -101,17 +100,17 @@ function populateData(context) {
         newdata.data.forEach(function(element) {
             var page = element.pages[0];
             labels.push(fixTimeDisplay(element.startedDateTime));
-            js_values.push(page.js_load_time);
-            css_values.push(page.css_load_time);
-            html_values.push(page.html_load_time);
-            image_values.push(page.image_load_time);
-            full_page_values.push(page.page_load_time);
+            js_values.push(page.js_load_time / 1000.0);
+            css_values.push(page.css_load_time / 1000.0);
+            html_values.push(page.html_load_time / 1000.0);
+            image_values.push(page.image_load_time / 1000.0);
+            full_page_values.push(page.page_load_time / 1000.0);
 
-            js_size_values.push(page.js_size);
-            css_size_values.push(page.css_size);
-            html_size_values.push(page.html_size);
-            image_size_values.push(page.image_size);
-            full_page_size_values.push(page.page_size);
+            js_size_values.push(page.js_size / 1024 / 1024);
+            css_size_values.push(page.css_size / 1024 / 1024);
+            html_size_values.push(page.html_size / 1024 / 1024);
+            image_size_values.push(page.image_size / 1024 / 1024);
+            full_page_size_values.push(page.page_size / 1024 / 1024);
         });
 
      var data = { //info used to style and plot the graph
@@ -261,6 +260,7 @@ function populateData(context) {
 
 
 $( document ).ready(function() {
+    $( "#header_title" ).text("Performance Overview For " + $( "#hostname option:selected" ).text());
     $( "#start_date" ).datepicker(
         {
             dateFormat: 'mm-dd-yy',
@@ -279,6 +279,7 @@ $( document ).ready(function() {
     });
     $( "#hostname" ).change( function() {
         populateData({hostname: $( "#hostname option:selected" ).text()});
+        $( "#header_title" ).text("Performance Overview For " + $( "#hostname option:selected" ).text());
     }); 
 
     populateData({});
@@ -297,7 +298,8 @@ $( document ).ready(function() {
 </head>
 <body>
     <div id="header" class="siteHeader  strip">
-        <h2>Performance Overview For domain.com</h2>
+        <br>
+        <h2 id="header_title" style="text-align: center;">Performance Overview For domain.com</h2>
     </div>
 	<div id="container" class="strip strip--light  module  module--small  overviewContent">
         <div id="date_picker" class="grid-pod  grid-pod--services">
@@ -305,19 +307,23 @@ $( document ).ready(function() {
             End Date<input type="text" name="end_date" id="end_date">
             Domain<select id="hostname">
                     <option value='humanssuck.net' selected>humanssuck.net</option>
-                    <option value='google.com'>google.com</option>
+                    <option value='cnn.com'>cnn.com</option>
                   </select>
         </div>
         <div id="load_chart" class="grid-pod  grid-pod--services">
             <h1>Page Load Breakdown</h1>
+            <h3>Load Time In Seconds</h3>
 		    <canvas id="myChart" width="740" height="200"></canvas>
         </div>
 		<div id="monitr" class="text-items"></div>
 		<div id="cssaverage" class="text-items"></div>
 		<div id="htmlaverage" class="text-items"></div>
 		<div id="result"></div>
-        <h1>Page Size Breakdown</h1>
-		<canvas id="size_chart" width="740" height="200"></canvas>
+        <div id="size_chart_container" class="grid-pod  grid-pod--services">
+            <h1>Page Size Breakdown</h1>
+            <h3>Asset Size In MB</h3>
+		    <canvas id="size_chart" width="740" height="200"></canvas>
+        </div>
 
 	</div>
 </body>
